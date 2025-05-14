@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Calculator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    #result ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card shadow-sm p-4">
+      <form id="convertForm">
+        <div class="mb-3">
+          <label for="riel" class="form-label">Please input your data: </label>
+          <input type="text" class="form-control" id="riel" placeholder="Enter Riel amount">
+          <div id="error" class="form-text text-danger mt-1"></div>
+        </div>
+        <button type="submit" class="btn btn-success">Convert</button>
+      </form>
+    </div>
+
+    <div id="result" class="card p-4 shadow-sm mt-4" style="display: none;"></div>
+  </div>
+
+  <script>
+    function numberToWordsEnglish(number) {
+      const ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+        "sixteen", "seventeen", "eighteen", "nineteen"];
+      const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+      const thousands = ["", " thousand", " million", " billion"];
+
+      if (number === 0) return "Zero";
+
+      let word = "", i = 0;
+      while (number > 0) {
+        let n = number % 1000;
+        if (n !== 0) {
+          let str = "";
+          if (n >= 100) {
+            str += ones[Math.floor(n / 100)] + " hundred ";
+            n %= 100;
+          }
+          if (n < 20) {
+            str += ones[n];
+          } else {
+            str += tens[Math.floor(n / 10)];
+            if (n % 10 > 0) {
+              str += "-" + ones[n % 10];
+            }
+          }
+          word = str + thousands[i] + " " + word;
+        }
+        number = Math.floor(number / 1000);
+        i++;
+      }
+
+      return word.trim().charAt(0).toUpperCase() + word.trim().slice(1) + " Riel";
+    }
+
+    function numberToWordsKhmer(number) {
+      const ones = ["", "មួយ", "ពីរ", "បី", "បួន", "ប្រាំ", "ប្រាំមួយ", "ប្រាំពីរ", "ប្រាំបី", "ប្រាំបួន"];
+      const tens = ["", "ដប់", "ម្ភៃ", "សាមសិប", "សែសិប", "ហាសិប", "ហុកសិប", "ចិតសិប", "ប៉ែតសិប", "កៅសិប"];
+      const units = ["", "ពាន់", "លាន", "ពាន់លាន"];
+
+      if (number === 0) return "សូន្យ រៀល";
+
+      let result = "", i = 0;
+      while (number > 0) {
+        const chunk = number % 1000;
+        if (chunk > 0) {
+          result = chunkKhmer(chunk, ones, tens) + " " + units[i] + " " + result;
+        }
+        number = Math.floor(number / 1000);
+        i++;
+      }
+
+      return result.trim().replace(/\s+/g, ' ') + " រៀល";
+    }
+
+    function chunkKhmer(number, ones, tens) {
+      let words = "";
+      if (number >= 100) {
+        words += ones[Math.floor(number / 100)] + " រយ ";
+        number %= 100;
+      }
+      if (number >= 10) {
+        words += tens[Math.floor(number / 10)] + " ";
+        number %= 10;
+      }
+      if (number > 0) {
+        words += ones[number] + " ";
+      }
+      return words.trim();
+    }
+
+    document.getElementById("convertForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const rielInput = document.getElementById("riel");
+      const errorDiv = document.getElementById("error");
+      const resultDiv = document.getElementById("result");
+
+      const value = rielInput.value.trim();
+      if (!/^\d+$/.test(value)) {
+        errorDiv.textContent = "Only numbers are allowed. Please try again.";
+        resultDiv.style.display = "none";
+        return;
+      }
+
+      const riel = parseInt(value);
+      const usd = (riel / 4000).toFixed(2);
+      const english = numberToWordsEnglish(riel);
+      const khmer = numberToWordsKhmer(riel);
+
+      errorDiv.textContent = "";
+      resultDiv.innerHTML = `
+        <h4 class="text-success mb-3">Conversion Result:</h4>
+        <ul class='list-group'>
+          <li class='list-group-item'><strong>a.</strong> English: ${english}</li>
+          <li class='list-group-item'><strong>b.</strong> Khmer: ${khmer}</li>
+          <li class='list-group-item'><strong>c.</strong> Dollar: ${usd} $</li>
+        </ul>
+      `;
+      resultDiv.style.display = "block";
+    });
+  </script>
+</body>
+</html>
