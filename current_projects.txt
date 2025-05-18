@@ -1,0 +1,4 @@
+Riel: 40000 | English: Forty thousand Riel | Khmer: សែសិប ពាន់ រៀល | USD: 10.00 $
+Riel: 40000 | English: Forty thousand Riel | Khmer: សែសិប ពាន់ រៀល | USD: 10.00 $
+Riel: 12345678 | English: Twelve million three hundred forty-five thousand six hundred seventy-eight Riel | Khmer: ដប់ ពីរ លាន បី រយ សែសិប ប្រាំ ពាន់ ប្រាំមួយ រយ ចិតសិប ប្រាំបី រៀល | USD: 3,086.42 $
+Riel: 40000 | English: Forty thousand Riel | Khmer: សែសិប ពាន់ រៀល | USD: 10.00 $
