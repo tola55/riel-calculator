@@ -1,5 +1,4 @@
 <?php
-// English number to words (using basic logic)
 function numberToWordsEnglish($number) {
     $ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
              "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
@@ -36,7 +35,6 @@ function numberToWordsEnglish($number) {
     return ucfirst(trim($word)) . " Riel";
 }
 
-// Khmer number to words (basic representation)
 function numberToWordsKhmer($number) {
     $ones = ["", "មួយ", "ពីរ", "បី", "បួន", "ប្រាំ", "ប្រាំមួយ", "ប្រាំពីរ", "ប្រាំបី", "ប្រាំបួន"];
     $tens = ["", "ដប់", "ម្ភៃ", "សាមសិប", "សែសិប", "ហាសិប", "ហុកសិប", "ចិតសិប", "ប៉ែតសិប", "កៅសិប"];
@@ -78,64 +76,47 @@ function chunkKhmer($number, $ones, $tens) {
 
     return trim($words);
 }
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Calculator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="card shadow-sm p-4">
-            <form method="post" onsubmit="return validateInput();">
-                <div class="mb-3">
-                    <label for="riel" class="form-label">Please input your data: </label>
-                    <input type="text" class="form-control" name="riel" id="riel" placeholder="Enter Riel amount">
-                    <div id="error" class="form-text text-danger mt-1"></div>
-                </div>
-                <button type="submit" class="btn btn-success">Convert</button>
-            </form>
-        </div>
-    </div>
-
-<?php
+// Handle POST request
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $riel = trim($_POST["riel"]);
 
-    echo '<div class="container mt-4">';
-    echo '<div class="card p-4 shadow-sm">';
-
     if (!is_numeric($riel)) {
-        echo '<div class="alert alert-danger" role="alert">';
-        echo 'Only numbers are allowed. Please try again.';
-        echo '</div>';
-    } else {
-        $riel = intval($riel);
-        $usd = number_format($riel / 4000, 2);
-
-        $english = numberToWordsEnglish($riel);
-        $khmer = numberToWordsKhmer($riel);
-
-        echo '<h4 class="text-success mb-3">Conversion Result:</h4>';
-        echo "<ul class='list-group'>";
-        echo "<li class='list-group-item'><strong>a.</strong> English: $english</li>";
-        echo "<li class='list-group-item'><strong>b.</strong> Khmer: $khmer</li>";
-        echo "<li class='list-group-item'><strong>c.</strong> Dollar: $usd $</li>";
-        echo "</ul>";
-
-        // Save to file
-        $line = "Riel: $riel | English: $english | Khmer: $khmer | USD: $usd $\n";
-        file_put_contents("current_projects.txt", $line, FILE_APPEND);
+        echo "<script>alert('Only numbers are allowed.'); window.location.href='index.html';</script>";
+        exit();
     }
 
-    echo '</div>';
-    echo '</div>';
+    $riel = intval($riel);
+    $usd = number_format($riel / 4000, 2);
+    $english = numberToWordsEnglish($riel);
+    $khmer = numberToWordsKhmer($riel);
+
+    // Save to file
+    $line = "Riel: $riel | English: $english | Khmer: $khmer | USD: $usd $\n";
+    file_put_contents("current_projects.txt", $line, FILE_APPEND);
+
+    // Display result and redirect
+    echo <<<HTML
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Conversion Result</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container mt-5">
+            <div class="card shadow-sm p-4">
+                <h4 class="text-success mb-3">Conversion Result:</h4>
+                <ul class='list-group mb-3'>
+                    <li class='list-group-item'><strong>a.</strong> English: $english</li>
+                    <li class='list-group-item'><strong>b.</strong> Khmer: $khmer</li>
+                    <li class='list-group-item'><strong>c.</strong> Dollar: $usd $</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+    </html>
+    HTML;
 }
 ?>
-
-</body>
-</html>
